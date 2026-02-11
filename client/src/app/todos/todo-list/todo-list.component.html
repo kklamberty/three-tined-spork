@@ -1,1 +1,22 @@
 <p>todo-list works!</p>
+<div data-test="todo-list-title">Things to do:</div>
+<div class="flex-row">
+  @if (serverFilteredTodos()) {
+    <ol>
+    <div class="flex-row gap-8 flex-wrap">
+      @for (todo of serverFilteredTodos(); track todo._id) {
+        <li data-test="todo">{{ todo.body }}
+          <ul>
+            @if (todo.status) {
+              <li>{{ todo.owner }} completed this {{ todo.category }} task. Done!</li>
+            } @else {
+              <li>Assigned to:{{ todo.owner }}</li>
+              <li>Category:{{ todo.category }}</li>
+            }
+          </ul>
+        </li>
+      }
+    </div>
+    </ol>
+  }
+</div>
