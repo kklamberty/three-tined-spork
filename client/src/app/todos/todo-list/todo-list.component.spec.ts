@@ -10,7 +10,7 @@ describe('TodoListComponent', () => {
     await TestBed.configureTestingModule({
       imports: [TodoListComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(TodoListComponent);
     component = fixture.componentInstance;
