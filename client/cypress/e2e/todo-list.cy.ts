@@ -12,7 +12,7 @@ describe('Todo List', () => {
   });
 
   it('Should have the correct title', () => {
-    page.getTodoTitle().should('have.text', 'Things to do:');
+    page.getTodoTitle().should('have.text', 'Todos');
   });
 
   it('Should show 300 todos', () => {

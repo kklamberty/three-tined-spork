@@ -1,22 +1,27 @@
-<p>todo-list works!</p>
-<div data-test="todo-list-title">Things to do:</div>
+<h2 data-test="todo-list-title">Todos</h2>
 <div class="flex-row">
   @if (serverFilteredTodos()) {
-    <ol>
+    <mat-list>
     <div class="flex-row gap-8 flex-wrap">
       @for (todo of serverFilteredTodos(); track todo._id) {
-        <li data-test="todo">{{ todo.body }}
-          <ul>
-            @if (todo.status) {
-              <li>{{ todo.owner }} completed this {{ todo.category }} task. Done!</li>
-            } @else {
-              <li>Assigned to:{{ todo.owner }}</li>
-              <li>Category:{{ todo.category }}</li>
-            }
-          </ul>
-        </li>
+        <mat-list-item data-test="todo">
+          @if (todo.status) {
+            <span matListItemTitle>
+              <span class="cdk-visually-hidden">Done</span>
+              <mat-icon aria-hidden="false" aria-label="check" fontIcon="done"></mat-icon>
+              {{ todo.owner }} completed this {{ todo.category }} task. Done!
+            </span>
+          } @else {
+            <span matListItemTitle>
+              <span class="cdk-visually-hidden">Todo</span>
+              <mat-icon aria-hidden="false" aria-label="checkbox" fontIcon="check_box_outline_blank"></mat-icon>
+              {{ todo.owner }} needs to complete this {{ todo.category }} task.
+            </span>
+          }
+          <span matListItemLine>{{ todo.body }}</span>
+        </mat-list-item>
       }
     </div>
-    </ol>
+  </mat-list>
   }
 </div>
