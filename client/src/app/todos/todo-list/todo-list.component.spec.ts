@@ -1,23 +1,45 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TodoListComponent } from './todo-list.component';
+import { TodoService } from '../todo.service';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
+import { MockTodoService } from 'src/testing/todo.service.mock';
 
-describe('TodoListComponent', () => {
-  let component: TodoListComponent;
+describe('Todo List', () => {
+  let todoList: TodoListComponent;
   let fixture: ComponentFixture<TodoListComponent>;
+  //let todoService: TodoService;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [TodoListComponent]
-    })
-      .compileComponents();
-
-    fixture = TestBed.createComponent(TodoListComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [TodoListComponent],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: TodoService, useClass: MockTodoService },
+        provideRouter([])
+      ],
+    });
   });
 
+  beforeEach(waitForAsync(() => {
+    TestBed.compileComponents().then(() => {
+      fixture = TestBed.createComponent(TodoListComponent);
+      todoList = fixture.componentInstance;
+      //todoService = TestBed.inject(TodoService);
+      fixture.detectChanges();
+    });
+  }));
+
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(todoList).toBeTruthy();
+  });
+
+  it('should initialize with serverFilteredTodos available', () => {
+    const todos = todoList.serverFilteredTodos();
+    expect(todos).toBeDefined();
+    expect(Array.isArray(todos)).toBe(true);
   });
 });

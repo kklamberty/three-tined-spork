@@ -1,0 +1,46 @@
+import { Injectable } from "@angular/core";
+import { Observable, of } from "rxjs";
+import { AppComponent } from "src/app/app.component";
+import { Todo } from "src/app/todos/todo";
+import { TodoService } from "src/app/todos/todo.service";
+
+@Injectable({
+  providedIn: AppComponent
+})
+export class MockTodoService implements Pick<TodoService, 'getTodos'> {
+  static testTodos: Todo[] =[
+    {
+      _id: 'blanche_lab2_id',
+      owner: 'Blanche',
+      status: true,
+      body: 'Finish Lab 2 writeup',
+      category: 'homework',
+    },
+    {
+      _id: 'blanche_lab3_id',
+      owner: 'Blanche',
+      status: false,
+      body: 'Finish Lab 3 writeup',
+      category: 'homework',
+    },
+    {
+      _id: 'fry_lasagne_id',
+      owner: 'Fry',
+      status: false,
+      body: 'Buy ingredients for lasagne',
+      category: 'groceries',
+    },
+    {
+      _id: 'fry_lasagne_id',
+      owner: 'Dawn',
+      status: false,
+      body: 'Buy everything for Christmas dinner, including lasagne',
+      category: 'groceries',
+
+    }
+  ];
+
+  getTodos(): Observable<Todo[]> {
+    return of(MockTodoService.testTodos);
+  }
+}

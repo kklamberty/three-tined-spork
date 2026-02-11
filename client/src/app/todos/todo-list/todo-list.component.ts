@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { TodoService } from '../todo.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-todo-list',
@@ -7,5 +9,8 @@ import { Component } from '@angular/core';
   styleUrl: './todo-list.component.scss',
 })
 export class TodoListComponent {
+  // todoService the `TodoService` used to get users from the server
+  private todoService = inject(TodoService);
 
+  serverFilteredTodos = toSignal(this.todoService.getTodos());
 }
