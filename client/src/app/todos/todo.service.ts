@@ -24,9 +24,15 @@ export class TodoService {
   // The URL for the todos part of the server API.
   readonly todoUrl: string = `${environment.apiUrl}todos`;
 
-  getTodos(): Observable<Todo[]> {
-    const httpParams: HttpParams = new HttpParams();
+  private readonly limitKey = 'limit';
 
+  getTodos(filters?: { limit?: number }): Observable<Todo[]> {
+    let httpParams: HttpParams = new HttpParams();
+    if (filters) {
+      if (filters.limit) {
+        httpParams = httpParams.set(this.limitKey, filters.limit);
+      }
+    }
     // Send the HTTP GET request with the given URL and parameters.
     // That will return the desired `Observable<Todo[]>`.
     return this.httpClient.get<Todo[]>(this.todoUrl, {

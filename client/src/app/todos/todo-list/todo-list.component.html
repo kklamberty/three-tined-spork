@@ -1,4 +1,10 @@
 <h2 data-test="todo-list-title">Todos</h2>
+<mat-form-field class="input-field">
+  <mat-label>Limit number of displayed todos</mat-label>
+    <input matInput data-test="limitInput" type="number" placeholder="Limit number" min="0" max="1000"
+      [(ngModel)]="limit">
+    <mat-hint>Filtered on server</mat-hint>
+</mat-form-field>
 <div class="flex-row">
   @if (serverFilteredTodos()) {
     <mat-list>
