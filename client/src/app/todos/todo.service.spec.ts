@@ -76,4 +76,18 @@ describe('TodoService', () => {
         .toHaveBeenCalledWith(todoService.todoUrl, { params: new HttpParams() });
     });
   }));
+
+  describe('When getTodos() is called with filter parameters, it correctly forms the HTTP request (Javalin/Server filtering)', () => {
+    it('correctly calls api/todos with filter parameter \'limit\'', () => {
+      const mockedMethod = spyOn(httpClient, 'get').and.returnValue(of(testTodos));
+      todoService.getTodos({ limit: 3 }).subscribe(() => {
+        expect(mockedMethod)
+          .withContext('one call')
+          .toHaveBeenCalledTimes(1);
+        expect(mockedMethod)
+          .withContext('talks to the correct endpoint')
+          .toHaveBeenCalledWith(todoService.todoUrl, { params: new HttpParams().set('limit', '3') });
+      });
+    });
+  });
 });

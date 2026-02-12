@@ -30,7 +30,7 @@ export class TodoService {
     let httpParams: HttpParams = new HttpParams();
     if (filters) {
       if (filters.limit) {
-        httpParams = httpParams.set(this.limitKey, filters.limit);
+        httpParams = httpParams.set(this.limitKey, filters.limit.toString());
       }
     }
     // Send the HTTP GET request with the given URL and parameters.

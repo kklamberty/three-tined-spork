@@ -40,7 +40,11 @@ export class MockTodoService implements Pick<TodoService, 'getTodos'> {
     }
   ];
 
-  getTodos(): Observable<Todo[]> {
+  // skipcq: JS-0105
+  // It's OK that the `_filters` argument isn't used here, so we'll disable
+  // this warning for just his function.
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  getTodos(_filters: { limit?: number }): Observable<Todo[]> {
     return of(MockTodoService.testTodos);
   }
 }
