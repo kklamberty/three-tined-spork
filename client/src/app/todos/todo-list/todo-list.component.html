@@ -1,25 +1,49 @@
-<h2 data-test="todo-list-title">Todos</h2>
+<div class="flex-row">
+  <div class="flex-1">
+    <mat-card class="search-card" data-test="todo-list-search-card">
+      <mat-card-header>
+        <mat-card-title data-test="todo-list-title">Todos<br></mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+
+
+        <div class="flex-row gap-8 flex-wrap">
+          <mat-form-field class="input-field">
+            <mat-label>Limit number</mat-label>
+            <input matInput type="number" placeholder="Limit number" min="0" max="1000"
+              [(ngModel)]="limit" data-test="limitInput">
+            <mat-hint>Filtered on server</mat-hint>
+          </mat-form-field>
+        </div>
+
+
+      </mat-card-content>
+
+    </mat-card>
+  </div>
+</div>
 <div class="flex-row">
   @if (serverFilteredTodos()) {
-    <mat-list>
+  <mat-list>
     <div class="flex-row gap-8 flex-wrap">
       @for (todo of serverFilteredTodos(); track todo._id) {
-        <mat-list-item data-test="todo">
-          @if (todo.status) {
-            <span matListItemTitle>
-              <span class="cdk-visually-hidden">Done</span>
-              <mat-icon aria-hidden="false" aria-label="check" fontIcon="done"></mat-icon>
-              {{ todo.owner }} completed this {{ todo.category }} task. Done!
-            </span>
-          } @else {
-            <span matListItemTitle>
-              <span class="cdk-visually-hidden">Todo</span>
-              <mat-icon aria-hidden="false" aria-label="checkbox" fontIcon="check_box_outline_blank"></mat-icon>
-              {{ todo.owner }} needs to complete this {{ todo.category }} task.
-            </span>
-          }
-          <span matListItemLine>{{ todo.body }}</span>
-        </mat-list-item>
+      <mat-list-item data-test="todo">
+        @if (todo.status) {
+        <span matListItemTitle>
+          <span class="cdk-visually-hidden">Done</span>
+          <mat-icon aria-hidden="false" aria-label="check" fontIcon="done"></mat-icon>
+          {{ todo.owner }} completed this {{ todo.category }} task. Done!
+        </span>
+        } @else {
+        <span matListItemTitle>
+          <span class="cdk-visually-hidden">Todo</span>
+          <mat-icon aria-hidden="false" aria-label="checkbox" fontIcon="check_box_outline_blank"></mat-icon>
+          {{ todo.owner }} needs to complete this {{ todo.category }} task.
+        </span>
+        }
+        <span matListItemLine>{{ todo.body }}</span>
+      </mat-list-item>
       }
     </div>
   </mat-list>
