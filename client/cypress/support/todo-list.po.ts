@@ -1,7 +1,8 @@
 export class TodoListPage {
   private readonly baseUrl = '/todos';
-  private readonly pageTitle = '[data-test=todo-list-title]'
-  private readonly todo = '[data-test=todo]'
+  private readonly pageTitle = '[data-test="todo-list-title"]'
+  private readonly todo = '[data-test="todo"]'
+  private readonly limitInput = '[data-test="limitInput"]';
 
   navigateTo() {
     return cy.visit(this.baseUrl);
@@ -23,6 +24,11 @@ export class TodoListPage {
    */
   getVisibleTodos() {
     return cy.get(this.todo);
+  }
+
+  setLimitControl(limit: number) {
+    cy.get(this.limitInput).focus();
+    return cy.get(this.limitInput).click().clear().type(limit.toString());
   }
 
 }

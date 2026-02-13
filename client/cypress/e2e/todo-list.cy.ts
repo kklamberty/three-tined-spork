@@ -18,4 +18,13 @@ describe('Todo List', () => {
   it('Should show 300 todos', () => {
     page.getVisibleTodos().should('have.length', 300);
   });
+
+  it('Should allow users to limit how many todos they see', () => {
+    page.setLimitControl(5).should('have.value', '5');
+    page.getVisibleTodos().should('have.lengthOf', 5);
+    page.setLimitControl(15).should('have.value', '15');
+    page.getVisibleTodos().should('have.lengthOf', 15);
+    cy.get('[data-test=limitInput]').clear();
+    page.getVisibleTodos().should('have.lengthOf', 300);
+  });
 })

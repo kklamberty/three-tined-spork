@@ -7,10 +7,12 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { catchError, combineLatest, of, switchMap, tap } from 'rxjs';
 import { Todo } from '../todo';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-todo-list',
   imports: [
+    MatCardModule,
     MatIcon,
     MatListModule,
     MatInputModule,
