@@ -5,7 +5,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
-import { catchError, combineLatest, of, switchMap, tap } from 'rxjs';
+import { catchError, combineLatest, debounceTime, of, switchMap, tap } from 'rxjs';
 import { Todo } from '../todo';
 import { MatCardModule } from '@angular/material/card';
 
@@ -32,6 +32,7 @@ export class TodoListComponent {
 
   serverFilteredTodos = toSignal(
     combineLatest([this.limit$]).pipe(
+      debounceTime(500),
       switchMap(([limit]) =>
         this.todoService.getTodos({
           limit,
