@@ -30,7 +30,11 @@ export class TodoService {
     let httpParams: HttpParams = new HttpParams();
     if (filters) {
       if (filters.limit) {
-        httpParams = httpParams.set(this.limitKey, filters.limit.toString());
+        if (filters.limit < 999999999 && filters.limit > 0) {
+          // sending too large a number in a request makes the
+          // type conversion fail on the server side, BAD REQUEST
+          httpParams = httpParams.set(this.limitKey, filters.limit.toString());
+        }
       }
     }
     // Send the HTTP GET request with the given URL and parameters.

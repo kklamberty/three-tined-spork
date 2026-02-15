@@ -26,5 +26,9 @@ describe('Todo List', () => {
     page.getVisibleTodos().should('have.lengthOf', 15);
     cy.get('[data-test=limitInput]').clear();
     page.getVisibleTodos().should('have.lengthOf', 300);
+    page.setLimitControl(1234567890).should('have.value', '1234567890');
+    page.getVisibleTodos().should('have.lengthOf', 300);
+    page.setLimitControl(-1234567890).should('have.value', '-1234567890');
+    page.getVisibleTodos().should('have.lengthOf', 300);
   });
 })

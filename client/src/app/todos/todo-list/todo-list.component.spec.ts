@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 
 import { TodoListComponent } from './todo-list.component';
 import { TodoService } from '../todo.service';
@@ -45,12 +45,14 @@ describe('Todo List', () => {
     expect(Array.isArray(todos)).toBe(true);
   });
 
-  it('should call getTodos() when limit signal changes', () => {
+  it('should call getTodos() when limit signal changes', fakeAsync(() => {
     const spy = spyOn(todoService, 'getTodos').and.callThrough();
     todoList.limit.set(3);
     fixture.detectChanges();
+    // tick must be in fakeAsync
+    tick(500); // accounts for the debounce in the pipe in the component
     expect(spy).toHaveBeenCalledWith({ limit: 3 });
-  });
+  }));
 
   it('should not show error message on successful load', () => {
     expect(todoList.errMsg()).toBeUndefined();
@@ -98,11 +100,12 @@ describe('Misbehaving Todo List', () => {
       .compileComponents();
   }));
 
-  beforeEach(() => {
+  beforeEach(fakeAsync(() => { // tick must be in fakeAsync
     fixture = TestBed.createComponent(TodoListComponent);
     todoList = fixture.componentInstance;
     fixture.detectChanges();
-  });
+    tick(500); // accounts for the debounce in the pipe in the component
+  }));
 
   it("generates an error if we don't set up a TodoListService", () => {
     // If the service fails, we expect the `serverFilteredTodos` signal to
