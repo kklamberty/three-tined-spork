@@ -49,4 +49,16 @@ export class TodoService {
 
   }
 
+  filterTodos(todos: Todo[], filters: { contains?: string }): Todo[] { // skipcq: JS-0105
+    let filteredTodos = todos;
+
+    // Filter by contents of body
+    if (filters.contains) {
+      filters.contains = filters.contains.toLowerCase();
+      filteredTodos = filteredTodos.filter(todo => todo.body.toLowerCase().indexOf(filters.contains) !== -1);
+    }
+
+    return filteredTodos;
+  }
+
 }
