@@ -51,7 +51,34 @@ describe('Todo List', () => {
     fixture.detectChanges();
     // tick must be in fakeAsync
     tick(500); // accounts for the debounce in the pipe in the component
-    expect(spy).toHaveBeenCalledWith({ limit: 3 });
+    expect(spy).toHaveBeenCalledWith({ status: undefined, limit: 3 });
+  }));
+
+  it('should call getTodos() when status signal changes', fakeAsync(() => {
+    const spy = spyOn(todoService, 'getTodos').and.callThrough();
+    todoList.status.set('complete');
+    fixture.detectChanges();
+    // tick must be in fakeAsync
+    tick(500); // accounts for the debounce in the pipe in the component
+    expect(spy).toHaveBeenCalledWith({ status: 'complete', limit: undefined });
+  }));
+
+  it('should call getTodos() when status signal changes', fakeAsync(() => {
+    const spy = spyOn(todoService, 'getTodos').and.callThrough();
+    todoList.status.set('incomplete');
+    fixture.detectChanges();
+    // tick must be in fakeAsync
+    tick(500); // accounts for the debounce in the pipe in the component
+    expect(spy).toHaveBeenCalledWith({ status: 'incomplete', limit: undefined });
+  }));
+
+  it('should call getTodos() when status signal changes', fakeAsync(() => {
+    const spy = spyOn(todoService, 'getTodos').and.callThrough();
+    todoList.status.set('both');
+    fixture.detectChanges();
+    // tick must be in fakeAsync
+    tick(500); // accounts for the debounce in the pipe in the component
+    expect(spy).toHaveBeenCalledWith({ status: 'both', limit: undefined });
   }));
 
   it('should not show error message on successful load', () => {

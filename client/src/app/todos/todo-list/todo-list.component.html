@@ -11,10 +11,19 @@
         <div class="flex-row gap-8 flex-wrap">
           <mat-form-field class="input-field">
             <mat-label>Limit number</mat-label>
-            <input matInput type="number" placeholder="Limit number" min="0" max="1000"
-              [(ngModel)]="limit" data-test="limitInput">
+            <input matInput type="number" placeholder="Limit number" min="0" max="10000" [(ngModel)]="limit"
+              data-test="limitInput">
             <mat-hint>Filtered on server</mat-hint>
           </mat-form-field>
+        </div>
+
+        <div class="flex-row gap-8 flex-wrap">
+          <mat-button-toggle-group name="statusControl" aria-label="Which statuses to show"
+            aria-labelledby="status-control-label" [(ngModel)]="status" data-test="statusInput">
+            <mat-button-toggle value="complete">Complete</mat-button-toggle>
+            <mat-button-toggle value="both">Both</mat-button-toggle>
+            <mat-button-toggle value="incomplete">Incomplete</mat-button-toggle>
+          </mat-button-toggle-group>
         </div>
 
 
