@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { catchError, combineLatest, debounceTime, of, switchMap, tap } from 'rxjs';
 import { Todo } from '../todo';
 import { MatCardModule } from '@angular/material/card';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 @Component({
   selector: 'app-todo-list',
@@ -16,6 +17,7 @@ import { MatCardModule } from '@angular/material/card';
     MatIcon,
     MatListModule,
     MatInputModule,
+    MatButtonToggleModule,
     FormsModule,
   ],
   templateUrl: './todo-list.component.html',
@@ -25,16 +27,19 @@ export class TodoListComponent {
   // todoService the `TodoService` used to get users from the server
   private todoService = inject(TodoService);
 
+  status = signal<string | undefined >(undefined);
   limit = signal<number | undefined>(undefined);
   errMsg = signal<string | undefined>(undefined);
 
   private limit$ = toObservable(this.limit);
+  private status$ = toObservable(this.status);
 
   serverFilteredTodos = toSignal(
-    combineLatest([this.limit$]).pipe(
+    combineLatest([this.status$, this.limit$]).pipe(
       debounceTime(500),
-      switchMap(([limit]) =>
+      switchMap(([status, limit]) =>
         this.todoService.getTodos({
+          status,
           limit,
         })
       ),

@@ -24,11 +24,15 @@ export class TodoService {
   // The URL for the todos part of the server API.
   readonly todoUrl: string = `${environment.apiUrl}todos`;
 
+  private readonly statusKey = 'status';
   private readonly limitKey = 'limit';
 
-  getTodos(filters?: { limit?: number }): Observable<Todo[]> {
+  getTodos(filters?: { status?: string, limit?: number }): Observable<Todo[]> {
     let httpParams: HttpParams = new HttpParams();
     if (filters) {
+      if ((filters.status == 'complete') || (filters.status == 'incomplete')) {
+        httpParams = httpParams.set(this.statusKey, filters.status);
+      }
       if (filters.limit) {
         if (filters.limit < 999999999 && filters.limit > 0) {
           // sending too large a number in a request makes the

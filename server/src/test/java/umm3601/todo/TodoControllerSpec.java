@@ -2,6 +2,7 @@ package umm3601.todo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -42,6 +43,7 @@ import io.javalin.http.HttpStatus;
 //import io.javalin.json.JavalinJackson;
 import io.javalin.http.NotFoundResponse;
 import io.javalin.validation.Validation;
+import io.javalin.validation.ValidationException;
 import io.javalin.validation.Validator;
 
 @SuppressWarnings({ "MagicNumber" })
@@ -272,6 +274,43 @@ class TodoControllerSpec {
     for (Todo todo : todoArrayListCaptor.getValue()) {
       assertEquals(false, todo.status);
     }
+  }
+
+  @Test
+  void respondsAppropriatelyToBadStatus() {
+    Map<String, List<String>> queryParams = new HashMap<>();
+    String illegalStatusString = "bad";
+    queryParams.put(TodoController.STATUS_KEY, Arrays.asList(new String[] {illegalStatusString}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+    // When the code being tested calls `ctx.queryParam(STATUS_KEY)` return the
+    // `illegalIntegerString`.
+    when(ctx.queryParam(TodoController.STATUS_KEY)).thenReturn(illegalStatusString);
+
+    // Create a validator that confirms that when we ask for the value associated with
+    // `STATUS_KEY`, we get back the `illegalStatusString`.
+    Validation validation = new Validation();
+    // The `STATUS_KEY` should be name of the key whose value is being validated.
+    // You can actually put whatever you want here, because it's only used in the generation
+    // of testing error reports, but using the actual key value will make those reports more informative.
+    Validator<String> validator = validation.validator(TodoController.STATUS_KEY, String.class, illegalStatusString);
+    when(ctx.queryParamAsClass(TodoController.STATUS_KEY, String.class)).thenReturn(validator);
+
+    // This should now throw a `ValidationException` because
+    // our request has a status that doesn't match the allowed pattern.
+    ValidationException exception = assertThrows(ValidationException.class, () -> {
+      todoController.getTodos(ctx);
+    });
+    // This digs into the returned `ValidationException` to get the underlying `Exception` that caused
+    // the validation to fail:
+    //   - `exception.getErrors` returns a `Map` that maps keys (like `STATUS_KEY`) to lists of
+    //      validation errors for that key
+    //   - `.get(STATUS_KEY)` returns a list of all the validation errors associated with `STATUS_KEY`
+    //   - `.get(0)` assumes that the root cause is the first error in the list. In our case there
+    //     is only one root cause,
+    //     so that's safe, but you might be careful about that assumption in other contexts.
+    //   - `.exception()` gets the actual `Exception` value that was the underlying cause
+    String exceptionMessage = exception.getErrors().get(TodoController.STATUS_KEY).get(0).getMessage();
+    assertTrue(exceptionMessage.contains(illegalStatusString));
   }
 
   @Test

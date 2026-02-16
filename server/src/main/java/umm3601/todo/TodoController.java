@@ -44,9 +44,9 @@ public class TodoController implements Controller {
   static final String SORTBY_KEY = "orderBy";
   static final String BODY_KEY = "contains";
 
-  private static final String CATEGORY_REGEX =
-    "^(groceries|homework|software design|video games)$";
+  private static final String CATEGORY_REGEX = "^(groceries|homework|software design|video games)$";
   private static final String OWNER_REGEX = "^(Blanche|Fry|Barry|Workman|Dawn|Roberta)$";
+  private static final String STATUS_REGEX = "^(complete|incomplete)$";
 
   private final JacksonMongoCollection<Todo> todoCollection;
 
@@ -59,15 +59,15 @@ public class TodoController implements Controller {
         UuidRepresentation.STANDARD);
   }
 
-  /* Construct a Bson filter document to use in the `find` method based on the
-   *    query parameters from the context.
-   *
-   * Right now it filters for nothing as we are returning all todos.
+  /*
+   * Construct a Bson filter document to use in the `find` method based on the
+   * query parameters from the context.
    *
    * @param ctx a Javalin HTTP context, which contains the query parameters
-   *    used to construct the filter
+   * used to construct the filter
+   *
    * @return a Bson filter document that can be used in the `find` method
-   *    to filter the database collection of users
+   * to filter the database collection of todos
    */
   private Bson constructFilter(Context ctx) {
     List<Bson> filters = new ArrayList<>();
@@ -75,7 +75,9 @@ public class TodoController implements Controller {
     // If statement to filter by the status specified
     if (ctx.queryParamMap().containsKey(STATUS_KEY)) {
       String status = ctx.queryParamAsClass(STATUS_KEY, String.class)
-        .get();
+          .check(it -> it.matches(STATUS_REGEX),
+              "Status must be either complete or incomplete; you provided " + ctx.queryParam(STATUS_KEY))
+          .get();
 
       if (status.equals("complete")) {
         Boolean statusBoolean = true;
@@ -83,8 +85,6 @@ public class TodoController implements Controller {
       } else if (status.equals("incomplete")) {
         Boolean statusBoolean = false;
         filters.add(eq(STATUS_KEY, statusBoolean));
-      } else {
-        throw new BadRequestResponse("The requested status wasn't a legal status (complete/incomplete)");
       }
     }
 
