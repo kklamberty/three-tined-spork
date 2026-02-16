@@ -98,6 +98,7 @@ describe('Misbehaving Todo List', () => {
 
   let todoServiceStub: {
     getTodos: () => Observable<Todo[]>;
+    filterTodos: () => Todo[];
   };
 
   beforeEach(() => {
@@ -106,7 +107,8 @@ describe('Misbehaving Todo List', () => {
       getTodos: () =>
         new Observable((observer) => {
           observer.error('getTodos() Observer generates an error');
-        })
+        }),
+      filterTodos: () => []
     };
   });
 
