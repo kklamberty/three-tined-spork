@@ -44,8 +44,7 @@ public class TodoController implements Controller {
   static final String SORTBY_KEY = "orderBy";
   static final String BODY_KEY = "contains";
 
-  private static final String CATEGORY_REGEX =
-    "^(groceries|homework|software design|video games)$";
+  private static final String CATEGORY_REGEX = "^(groceries|homework|software design|video games)$";
   private static final String OWNER_REGEX = "^(Blanche|Fry|Barry|Workman|Dawn|Roberta)$";
   private static final String STATUS_REGEX = "^(complete|incomplete)$";
 
@@ -63,7 +62,6 @@ public class TodoController implements Controller {
   /*
    * Construct a Bson filter document to use in the `find` method based on the
    * query parameters from the context.
-   * Right now it filters for nothing as we are returning all todos.
    *
    * @param ctx a Javalin HTTP context, which contains the query parameters
    * used to construct the filter
