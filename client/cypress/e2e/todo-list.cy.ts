@@ -31,4 +31,20 @@ describe('Todo List', () => {
     page.setLimitControl(-1234567890).should('have.value', '-1234567890');
     page.getVisibleTodos().should('have.lengthOf', 300);
   });
+
+  it('Should allow users to filter by status as incomplete', () => {
+    page.setStatusControl('Incomplete');
+    // All of the todos should have the status we are filtering by
+    page.getVisibleTodos().each(e => {
+      cy.wrap(e).find('[data-test="status"]').should('have.text', 'Todo');
+    });
+  });
+
+  it('Should allow users to filter by status as complete', () => {
+    page.setStatusControl('Complete');
+    // All of the todos should have the status we are filtering by
+    page.getVisibleTodos().each(e => {
+      cy.wrap(e).find('[data-test="status"]').should('have.text', 'Done');
+    });
+  });
 })

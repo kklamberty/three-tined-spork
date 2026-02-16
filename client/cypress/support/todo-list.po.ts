@@ -3,6 +3,7 @@ export class TodoListPage {
   private readonly pageTitle = '[data-test="todo-list-title"]'
   private readonly todo = '[data-test="todo"]'
   private readonly limitInput = '[data-test="limitInput"]';
+  private readonly statusInput = '[data-test="statusInput"]';
 
   navigateTo() {
     return cy.visit(this.baseUrl);
@@ -29,6 +30,10 @@ export class TodoListPage {
   setLimitControl(limit: number) {
     cy.get(this.limitInput).focus();
     return cy.get(this.limitInput).click().clear().type(limit.toString());
+  }
+
+  setStatusControl(status: string) {
+    return cy.get(`${this.statusInput} [data-test="status${status}"]`).click();
   }
 
 }

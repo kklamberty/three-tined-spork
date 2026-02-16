@@ -20,9 +20,9 @@
         <div class="flex-row gap-8 flex-wrap">
           <mat-button-toggle-group name="statusControl" aria-label="Which statuses to show"
             aria-labelledby="status-control-label" [(ngModel)]="status" data-test="statusInput">
-            <mat-button-toggle value="complete">Complete</mat-button-toggle>
-            <mat-button-toggle value="both">Both</mat-button-toggle>
-            <mat-button-toggle value="incomplete">Incomplete</mat-button-toggle>
+            <mat-button-toggle value="complete" data-test="statusComplete">Complete</mat-button-toggle>
+            <mat-button-toggle value="both" data-test="statusBoth">Both</mat-button-toggle>
+            <mat-button-toggle value="incomplete" data-test="statusIncomplete">Incomplete</mat-button-toggle>
           </mat-button-toggle-group>
         </div>
 
@@ -40,13 +40,13 @@
       <mat-list-item data-test="todo">
         @if (todo.status) {
         <span matListItemTitle>
-          <span class="cdk-visually-hidden">Done</span>
+          <span class="cdk-visually-hidden" data-test="status">Done</span>
           <mat-icon aria-hidden="false" aria-label="check" fontIcon="done"></mat-icon>
           {{ todo.owner }} completed this {{ todo.category }} task. Done!
         </span>
         } @else {
         <span matListItemTitle>
-          <span class="cdk-visually-hidden">Todo</span>
+          <span class="cdk-visually-hidden" data-test="status">Todo</span>
           <mat-icon aria-hidden="false" aria-label="checkbox" fontIcon="check_box_outline_blank"></mat-icon>
           {{ todo.owner }} needs to complete this {{ todo.category }} task.
         </span>
