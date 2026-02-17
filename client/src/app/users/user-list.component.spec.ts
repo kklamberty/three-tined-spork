@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { Observable } from 'rxjs';
 import { MockUserService } from 'src/testing/user.service.mock';
@@ -45,19 +45,21 @@ describe('User list', () => {
     expect(Array.isArray(users)).toBe(true);
   });
 
-  it('should call getUsers() when userRole signal changes', () => {
+  it('should call getUsers() when userRole signal changes', fakeAsync(() => {
     const spy = spyOn(userService, 'getUsers').and.callThrough();
     userList.userRole.set('admin');
     fixture.detectChanges();
+    tick(500);
     expect(spy).toHaveBeenCalledWith({ role: 'admin', age: undefined });
-  });
+  }));
 
-  it('should call getUsers() when userAge signal changes', () => {
+  it('should call getUsers() when userAge signal changes', fakeAsync(() => {
     const spy = spyOn(userService, 'getUsers').and.callThrough();
     userList.userAge.set(25);
     fixture.detectChanges();
+    tick(500);
     expect(spy).toHaveBeenCalledWith({ role: undefined, age: 25 });
-  });
+  }));
 
   it('should not show error message on successful load', () => {
     expect(userList.errMsg()).toBeUndefined();
@@ -107,11 +109,12 @@ describe('Misbehaving User List', () => {
       .compileComponents();
   }));
 
-  beforeEach(() => {
+  beforeEach(fakeAsync(() => {
     fixture = TestBed.createComponent(UserListComponent);
     userList = fixture.componentInstance;
     fixture.detectChanges();
-  });
+    tick(500);
+  }));
 
   it("generates an error if we don't set up a UserListService", () => {
     // If the service fails, we expect the `serverFilteredUsers` signal to

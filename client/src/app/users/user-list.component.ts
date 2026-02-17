@@ -12,7 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { catchError, combineLatest, of, switchMap, tap } from 'rxjs';
+import { catchError, combineLatest, debounceTime, of, switchMap, tap } from 'rxjs';
 import { User, UserRole } from './user';
 import { UserCardComponent } from './user-card.component';
 import { UserService } from './user.service';
@@ -86,6 +86,7 @@ export class UserListComponent {
         // `switchMap` maps from one observable to another. In this case, we're taking `role` and `age` and passing
         // them as arguments to `userService.getUsers()`, which then returns a new observable that contains the
         // results.
+        debounceTime(500),
         switchMap(([role, age]) =>
           this.userService.getUsers({
             role,
