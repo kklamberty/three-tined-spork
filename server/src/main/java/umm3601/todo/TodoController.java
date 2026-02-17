@@ -139,7 +139,7 @@ public class TodoController implements Controller {
    * @param ctx a Javalin HTTP context, which contains the query parameters
    *    used to construct the sorting order
    * @return a Bson sorting document that can be used in the `sort` method
-   *    to sort the database collection of users
+   *    to sort the database collection of Todos
    */
   private Bson constructSortingOrder(Context ctx) {
     String sortBy = Objects.requireNonNullElse(ctx.queryParam(SORTBY_KEY), "owner");
@@ -176,7 +176,7 @@ public class TodoController implements Controller {
   }
 
   /*
-   * Set the JSON body of the response to be the single user
+   * Set the JSON body of the response to be the single Todo
    * specified by the `id` parameter in the request
    *
    * @param ctx a Javalin HTTP context
