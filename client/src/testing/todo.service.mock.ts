@@ -7,7 +7,7 @@ import { TodoService } from "src/app/todos/todo.service";
 @Injectable({
   providedIn: AppComponent
 })
-export class MockTodoService implements Pick<TodoService, 'getTodos'> {
+export class MockTodoService implements Pick<TodoService, 'getTodos' | 'filterTodos'> {
   static testTodos: Todo[] =[
     {
       _id: 'blanche_lab2_id',
@@ -31,7 +31,7 @@ export class MockTodoService implements Pick<TodoService, 'getTodos'> {
       category: 'groceries',
     },
     {
-      _id: 'fry_lasagne_id',
+      _id: 'dawn_lasagne_id',
       owner: 'Dawn',
       status: false,
       body: 'Buy everything for Christmas dinner, including lasagne',
@@ -46,5 +46,11 @@ export class MockTodoService implements Pick<TodoService, 'getTodos'> {
   /* eslint-disable @typescript-eslint/no-unused-vars */
   getTodos(_filters: { limit?: number }): Observable<Todo[]> {
     return of(MockTodoService.testTodos);
+  }
+
+  filterTodos(todos: Todo[], filters: {
+    contains?: string;
+  }): Todo[] {
+    return []
   }
 }

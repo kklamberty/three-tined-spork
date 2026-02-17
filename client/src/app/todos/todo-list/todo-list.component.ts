@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { TodoService } from '../todo.service';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatIcon } from '@angular/material/icon';
@@ -27,6 +27,7 @@ export class TodoListComponent {
   // todoService the `TodoService` used to get users from the server
   private todoService = inject(TodoService);
 
+  contains = signal<string | undefined>(undefined);
   status = signal<string | undefined >(undefined);
   limit = signal<number | undefined>(undefined);
   errMsg = signal<string | undefined>(undefined);
@@ -59,5 +60,12 @@ export class TodoListComponent {
       })
     )
   );
+
+  filteredTodos = computed(() => {
+    const serverFilteredTodos = this.serverFilteredTodos();
+    return this.todoService.filterTodos(serverFilteredTodos, {
+      contains: this.contains(),
+    });
+  });
 
 }
