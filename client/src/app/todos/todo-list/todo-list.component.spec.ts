@@ -54,7 +54,7 @@ describe('Todo List', () => {
     expect(spy).toHaveBeenCalledWith({ status: undefined, limit: 3 });
   }));
 
-  it('should call getTodos() when status signal changes', fakeAsync(() => {
+  it('should call getTodos() when status signal changes to \'complete\'', fakeAsync(() => {
     const spy = spyOn(todoService, 'getTodos').and.callThrough();
     todoList.status.set('complete');
     fixture.detectChanges();
@@ -63,7 +63,7 @@ describe('Todo List', () => {
     expect(spy).toHaveBeenCalledWith({ status: 'complete', limit: undefined });
   }));
 
-  it('should call getTodos() when status signal changes', fakeAsync(() => {
+  it('should call getTodos() when status signal changes to \'incomplete\'', fakeAsync(() => {
     const spy = spyOn(todoService, 'getTodos').and.callThrough();
     todoList.status.set('incomplete');
     fixture.detectChanges();
@@ -72,7 +72,7 @@ describe('Todo List', () => {
     expect(spy).toHaveBeenCalledWith({ status: 'incomplete', limit: undefined });
   }));
 
-  it('should call getTodos() when status signal changes', fakeAsync(() => {
+  it('should call getTodos() when status signal changes to \'both\'', fakeAsync(() => {
     const spy = spyOn(todoService, 'getTodos').and.callThrough();
     todoList.status.set('both');
     fixture.detectChanges();
