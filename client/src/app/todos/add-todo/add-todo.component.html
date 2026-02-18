@@ -1,1 +1,79 @@
-<p>add-todo works!</p>
+<div class="flex-row">
+  <div class="flex-1">
+    <form [formGroup]="addTodoForm" (ngSubmit)="submitForm();">
+      <mat-card class="add-todo-card">
+        <mat-card-header>
+          <mat-card-title class="add-todo-title">New User</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="flex-col">
+            <mat-form-field>
+              <mat-label>Owner</mat-label>
+              <mat-select required formControlName="owner">
+                <mat-option value="Alice">Alice</mat-option>
+                <mat-option value="Barry">Barry</mat-option>
+                <mat-option value="Blanche">Blanche</mat-option>
+                <mat-option value="Dawn">Dawn</mat-option>
+                <mat-option value="Fry">Fry</mat-option>
+                <mat-option value="Roberta">Roberta</mat-option>
+                <mat-option value="Workman">Workman</mat-option>
+              </mat-select>
+              @if (formControlHasError('owner')) {
+                <mat-error data-test="ownerError">
+                  {{getErrorMessage('owner')}}
+                </mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Status</mat-label>
+              <mat-select required formControlName="status">
+                <mat-option value="incomplete">Incomplete</mat-option>
+                <mat-option value="complete">Complete</mat-option>
+              </mat-select>
+              @if (formControlHasError('status')) {
+                <mat-error data-test="statusError">
+                  {{getErrorMessage('status')}}
+                </mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Body</mat-label>
+              <input matInput type="text"
+                formControlName="body" required>
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Category</mat-label>
+              <mat-select required formControlName="category">
+                <mat-option value="groceries">Groceries</mat-option>
+                <mat-option value="homework">Homework</mat-option>
+                <mat-option value="video games">Video Games</mat-option>
+                <mat-option value="software design">Software Design</mat-option>
+              </mat-select>
+              @if (formControlHasError('category')) {
+                <mat-error data-test="categoryError">
+                  {{getErrorMessage('category')}}
+                </mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+        </mat-card-content>
+        <mat-card-actions align="end">
+          <button
+            mat-button
+            type="button"
+            color="primary"
+            [disabled]="!addTodoForm.valid"
+            type="submit"
+            data-test="confirmAddTodoButton"
+            >
+            ADD TODO
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </form>
+  </div>
+</div>
