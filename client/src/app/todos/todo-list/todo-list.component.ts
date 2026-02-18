@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { TodoService } from '../todo.service';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { MatIcon } from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
@@ -9,16 +9,22 @@ import { catchError, combineLatest, debounceTime, of, switchMap, tap } from 'rxj
 import { Todo } from '../todo';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatButtonModule } from '@angular/material/button';
+import { RouterLink } from '@angular/router';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-todo-list',
   imports: [
-    MatCardModule,
-    MatIcon,
-    MatListModule,
-    MatInputModule,
-    MatButtonToggleModule,
     FormsModule,
+    MatButtonModule,
+    MatButtonToggleModule,
+    MatCardModule,
+    MatIconModule,
+    MatInputModule,
+    MatListModule,
+    MatTooltipModule,
+    RouterLink
   ],
   templateUrl: './todo-list.component.html',
   styleUrl: './todo-list.component.scss',
