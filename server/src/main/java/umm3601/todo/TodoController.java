@@ -6,6 +6,7 @@ import static com.mongodb.client.model.Filters.regex;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -42,10 +43,11 @@ public class TodoController implements Controller {
   static final String CATEGORY_KEY = "category";
   static final String OWNER_KEY = "owner";
   static final String SORTBY_KEY = "orderBy";
+  static final String SORT_ORDER_KEY = "sortOrder";
   static final String BODY_KEY = "contains";
 
   private static final String CATEGORY_REGEX = "^(groceries|homework|software design|video games)$";
-  private static final String OWNER_REGEX = "^(Blanche|Fry|Barry|Workman|Dawn|Roberta)$";
+  private static final String OWNER_REGEX = "^(Blanche|Fry|Barry|Workman|Dawn|Roberta|Alice)$";
   private static final String STATUS_REGEX = "^(complete|incomplete)$";
 
   private final JacksonMongoCollection<Todo> todoCollection;
@@ -139,11 +141,11 @@ public class TodoController implements Controller {
    * @param ctx a Javalin HTTP context, which contains the query parameters
    *    used to construct the sorting order
    * @return a Bson sorting document that can be used in the `sort` method
-   *    to sort the database collection of users
+   *    to sort the database collection of Todos
    */
   private Bson constructSortingOrder(Context ctx) {
-    String sortBy = Objects.requireNonNullElse(ctx.queryParam(SORTBY_KEY), "owner");
-    String sortOrder = Objects.requireNonNullElse(ctx.queryParam("sortOrder"), "asc");
+    String sortBy = Objects.requireNonNullElse(ctx.queryParam(SORTBY_KEY), "_id");
+    String sortOrder = Objects.requireNonNullElse(ctx.queryParam(SORT_ORDER_KEY), "desc");
     Bson sortingOrder = sortOrder.equals("desc") ?  Sorts.descending(sortBy) : Sorts.ascending(sortBy);
     return sortingOrder;
   }
@@ -176,7 +178,7 @@ public class TodoController implements Controller {
   }
 
   /*
-   * Set the JSON body of the response to be the single user
+   * Set the JSON body of the response to be the single Todo
    * specified by the `id` parameter in the request
    *
    * @param ctx a Javalin HTTP context
@@ -198,7 +200,50 @@ public class TodoController implements Controller {
     }
   }
 
-  /*
+  /**
+   * Add a new Todo using information from the context
+   * (as long as the information gives "legal" values to Todo fields)
+   *
+   * @param ctx a Javalin HTTP context that provides the Todo info
+   *  in the JSON body of the request
+   */
+  public void addNewTodo(Context ctx) {
+    /*
+     * The follow chain of statements uses the Javalin validator system
+     * to verify that instance of `Todo` provided in this context is
+     * a "legal" Todo.
+     *
+     * If any of these checks fail, the Javalin system will throw a
+     * `BadRequestResponse` with an appropriate error message.
+     */
+    String contextBody = ctx.body();
+    Todo newTodo = ctx.bodyValidator(Todo.class)
+      .check(tdo -> tdo.owner != null && tdo.owner.matches(OWNER_REGEX),
+        "Todo must have a non-empty owner && todo owner must match one of the approved owners; ctx body was ")
+      .check(tdo -> tdo.status instanceof Boolean,
+        "Todo must have a boolean for status; ctx body was " + contextBody)
+      .check(tdo -> tdo.body != null && tdo.body.length() > 2,
+        "Todo must have a non-empty body longer than 2 characters; *ctx* body was " + contextBody)
+      .check(tdo -> tdo.category.matches(CATEGORY_REGEX),
+        "Todo must have a legal todo category; ctx body was " + contextBody)
+      .get();
+
+    // Add the new Todo to the database
+    todoCollection.insertOne(newTodo);
+
+    // Set the JSON response to be the `_id` of the newly created Todo.
+    // This gives the client the opportunity to know the ID of the new Todo,
+    // which it can then use to perform further operations (e.g., a GET request
+    // to get and display the details of the new Todo).
+    ctx.json(Map.of("id", newTodo._id));
+    // 201 (`HttpStatus.CREATED`) is the HTTP code for when we successfully
+    // create a new resource (a Todo in this case).
+    // See, e.g., https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+    // for a description of the various response codes.
+    ctx.status(HttpStatus.CREATED);
+  }
+
+  /**
    * Sets up routes for the `todo` collection endpoints.
    * A TodoController instance handles the todo endpoints,
    * and the addRoutes method adds the routes to this controller.
@@ -211,5 +256,8 @@ public class TodoController implements Controller {
     server.get(API_TODOS, this::getTodos);
     // Get the specified todo by ID
     server.get(API_TODO_BY_ID, this::getTodoByID);
+    // Add a todo with the todo info being in the JSON body
+    // of the HTTP request
+    server.post(API_TODOS, this::addNewTodo);
   }
 }
