@@ -43,6 +43,7 @@ public class TodoController implements Controller {
   static final String CATEGORY_KEY = "category";
   static final String OWNER_KEY = "owner";
   static final String SORTBY_KEY = "orderBy";
+  static final String SORT_ORDER_KEY = "sortOrder";
   static final String BODY_KEY = "contains";
 
   private static final String CATEGORY_REGEX = "^(groceries|homework|software design|video games)$";
@@ -144,7 +145,7 @@ public class TodoController implements Controller {
    */
   private Bson constructSortingOrder(Context ctx) {
     String sortBy = Objects.requireNonNullElse(ctx.queryParam(SORTBY_KEY), "_id");
-    String sortOrder = Objects.requireNonNullElse(ctx.queryParam("sortOrder"), "desc");
+    String sortOrder = Objects.requireNonNullElse(ctx.queryParam(SORT_ORDER_KEY), "desc");
     Bson sortingOrder = sortOrder.equals("desc") ?  Sorts.descending(sortBy) : Sorts.ascending(sortBy);
     return sortingOrder;
   }
@@ -217,14 +218,12 @@ public class TodoController implements Controller {
      */
     String contextBody = ctx.body();
     Todo newTodo = ctx.bodyValidator(Todo.class)
-      .check(tdo -> tdo.owner != null,
-        "Todo must have a non-empty owner; ctx body was " + contextBody)
-      .check(tdo -> tdo.owner.matches(OWNER_REGEX),
-        "Todo owner must match one of the approved owners; ctx body was ")
+      .check(tdo -> tdo.owner != null && tdo.owner.matches(OWNER_REGEX),
+        "Todo must have a non-empty owner && todo owner must match one of the approved owners; ctx body was ")
       .check(tdo -> tdo.status instanceof Boolean,
         "Todo must have a boolean for status; ctx body was " + contextBody)
       .check(tdo -> tdo.body != null && tdo.body.length() > 2,
-        "Todo must have a non-empty body; *ctx* body was " + contextBody)
+        "Todo must have a non-empty body longer than 2 characters; *ctx* body was " + contextBody)
       .check(tdo -> tdo.category.matches(CATEGORY_REGEX),
         "Todo must have a legal todo category; ctx body was " + contextBody)
       .get();

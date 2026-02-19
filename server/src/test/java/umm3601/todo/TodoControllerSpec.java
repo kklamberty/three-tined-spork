@@ -1,6 +1,8 @@
 package umm3601.todo;
 
+import static com.mongodb.client.model.Filters.eq;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,8 +42,9 @@ import io.javalin.Javalin;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
-//import io.javalin.json.JavalinJackson;
+import io.javalin.json.JavalinJackson;
 import io.javalin.http.NotFoundResponse;
+import io.javalin.validation.BodyValidator;
 import io.javalin.validation.Validation;
 import io.javalin.validation.ValidationException;
 import io.javalin.validation.Validator;
@@ -64,7 +67,7 @@ class TodoControllerSpec {
   private static MongoDatabase db;
 
   // Used to translate between JSON and POJOs.
-  //private static JavalinJackson javalinJackson = new JavalinJackson();
+  private static JavalinJackson javalinJackson = new JavalinJackson();
 
   @Mock
   private Context ctx;
@@ -228,7 +231,29 @@ class TodoControllerSpec {
   }
 
   @Test
-  void canGetTodosWithStatus() throws IOException {
+  void cannotGetTodosLimitedTo0() throws IOException {
+    Integer limit = 0;
+    String illegalLimitString = limit.toString();
+
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put(TodoController.LIMIT_KEY, Arrays.asList(new String[] {illegalLimitString}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+    when(ctx.queryParam(TodoController.LIMIT_KEY)).thenReturn(illegalLimitString);
+
+    Validation validation = new Validation();
+    Validator<Integer> validator = validation.validator(TodoController.LIMIT_KEY, Integer.class, illegalLimitString);
+    when(ctx.queryParamAsClass(TodoController.LIMIT_KEY, Integer.class)).thenReturn(validator);
+
+    ValidationException exception = assertThrows(ValidationException.class, () -> {
+      todoController.getTodos(ctx);
+    });
+
+    String exceptionMessage = exception.getErrors().get(TodoController.LIMIT_KEY).get(0).getMessage();
+    assertTrue(exceptionMessage.contains(illegalLimitString));
+  }
+
+  @Test
+  void canGetTodosWithStatusComplete() throws IOException {
     //Boolean targetStatus = true;
     String targetStatusString = "complete";
 
@@ -282,8 +307,6 @@ class TodoControllerSpec {
     String illegalStatusString = "bad";
     queryParams.put(TodoController.STATUS_KEY, Arrays.asList(new String[] {illegalStatusString}));
     when(ctx.queryParamMap()).thenReturn(queryParams);
-    // When the code being tested calls `ctx.queryParam(STATUS_KEY)` return the
-    // `illegalIntegerString`.
     when(ctx.queryParam(TodoController.STATUS_KEY)).thenReturn(illegalStatusString);
 
     // Create a validator that confirms that when we ask for the value associated with
@@ -370,11 +393,13 @@ class TodoControllerSpec {
   }
 
   @Test
-  void canGetSortedTodosByCategory() throws IOException {
+  void canGetSortedTodosByCategoryAscending() throws IOException {
     Map<String, List<String>> queryParams = new HashMap<>();
     queryParams.put(TodoController.SORTBY_KEY, Arrays.asList(new String[] {"category"}));
+    queryParams.put(TodoController.SORT_ORDER_KEY, Arrays.asList(new String[] {"asc"}));
     when(ctx.queryParamMap()).thenReturn(queryParams);
     when(ctx.queryParam(TodoController.SORTBY_KEY)).thenReturn("category");
+    when(ctx.queryParam(TodoController.SORT_ORDER_KEY)).thenReturn("asc");
 
     todoController.getTodos(ctx);
 
@@ -426,5 +451,134 @@ class TodoControllerSpec {
       assertEquals(targetOwnerString, todo.owner);
       assertEquals(targetCategoryString, todo.category);
     }
+  }
+
+  @Test
+  void addTodo() throws IOException {
+    Todo newTodo = new Todo();
+    newTodo.owner = "Alice";
+    newTodo.status = false;
+    newTodo.body = "Buy a pound of butter";
+    newTodo.category = "groceries";
+
+    String newTodoJson = javalinJackson.toJsonString(newTodo, Todo.class);
+
+    when(ctx.bodyValidator(Todo.class))
+    .thenReturn(new BodyValidator<Todo>(newTodoJson, Todo.class,
+      () -> javalinJackson.fromJsonString(newTodoJson, Todo.class)));
+
+    todoController.addNewTodo(ctx);
+    verify(ctx).json(mapCaptor.capture());
+
+    verify(ctx).status(HttpStatus.CREATED);
+
+    Document addedTodo = db.getCollection("todos")
+      .find(eq("_id", new ObjectId(mapCaptor.getValue().get("id")))).first();
+
+    assertNotEquals("", addedTodo.get("_id"));
+    assertEquals(newTodo.owner, addedTodo.get(TodoController.OWNER_KEY));
+    assertEquals(newTodo.status, addedTodo.get(TodoController.STATUS_KEY));
+    assertEquals(newTodo.body, addedTodo.get("body"));
+    assertEquals(newTodo.category, addedTodo.get(TodoController.CATEGORY_KEY));
+  }
+
+  @Test
+  void addTodoWithNoOwner() throws IOException {
+    String newTodoJson = """
+        {
+          "status": false,
+          "body": "Buy a pound of butter",
+          "category": "groceries"
+        }
+        """;
+
+    when(ctx.body()).thenReturn(newTodoJson);
+    when(ctx.bodyValidator(Todo.class))
+        .then(value -> new BodyValidator<Todo>(newTodoJson, Todo.class,
+                        () -> javalinJackson.fromJsonString(newTodoJson, Todo.class)));
+
+    // This should now throw a `ValidationException` because
+    // the JSON for our new user has an invalid email address.
+    ValidationException exception = assertThrows(ValidationException.class, () -> {
+      todoController.addNewTodo(ctx);
+    });
+    // This `ValidationException` was caused by a custom check, so we just get the message from the first
+    // error (which is a `"REQUEST_BODY"` error) and convert that to a string with `toString()`. This gives
+    // a `String` that has all the details of the exception, which we can make sure contains information
+    // that would help a developer sort out validation errors.
+    String exceptionMessage = exception.getErrors().get("REQUEST_BODY").get(0).toString();
+
+    // The message should be the message from our code under test, which should also include some text
+    // indicating that there was a missing company name.
+    assertTrue(exceptionMessage.contains("non-empty owner"));
+  }
+
+  @Test
+  void addTodoWithOwnerNotMatchingPAttern() throws IOException {
+    String newTodoJson = """
+        {
+          "owner": "Alex",
+          "status": false,
+          "body": "Buy a pound of butter",
+          "category": "groceries"
+        }
+        """;
+
+    when(ctx.body()).thenReturn(newTodoJson);
+    when(ctx.bodyValidator(Todo.class))
+        .then(value -> new BodyValidator<Todo>(newTodoJson, Todo.class,
+                        () -> javalinJackson.fromJsonString(newTodoJson, Todo.class)));
+
+    ValidationException exception = assertThrows(ValidationException.class, () -> {
+      todoController.addNewTodo(ctx);
+    });
+
+    String exceptionMessage = exception.getErrors().get("REQUEST_BODY").get(0).toString();
+    assertTrue(exceptionMessage.contains("must match one of the approved owners"));
+  }
+
+  @Test
+  void addTodoWithNoBody() throws IOException {
+  String newTodoJson = """
+        {
+          "owner": "Alice",
+          "status": false,
+          "category": "groceries"
+        }
+        """;
+      when(ctx.body()).thenReturn(newTodoJson);
+    when(ctx.bodyValidator(Todo.class))
+        .then(value -> new BodyValidator<Todo>(newTodoJson, Todo.class,
+                        () -> javalinJackson.fromJsonString(newTodoJson, Todo.class)));
+
+    ValidationException exception = assertThrows(ValidationException.class, () -> {
+      todoController.addNewTodo(ctx);
+    });
+
+    String exceptionMessage = exception.getErrors().get("REQUEST_BODY").get(0).toString();
+    assertTrue(exceptionMessage.contains("non-empty body"));
+  }
+
+    @Test
+  void addTodoWithShortBody() throws IOException {
+  String newTodoJson = """
+        {
+          "owner": "Alice",
+          "body": "PU",
+          "status": false,
+          "category": "groceries"
+        }
+        """;
+      when(ctx.body()).thenReturn(newTodoJson);
+    when(ctx.bodyValidator(Todo.class))
+        .then(value -> new BodyValidator<Todo>(newTodoJson, Todo.class,
+                        () -> javalinJackson.fromJsonString(newTodoJson, Todo.class)));
+
+    ValidationException exception = assertThrows(ValidationException.class, () -> {
+      todoController.addNewTodo(ctx);
+    });
+
+    String exceptionMessage = exception.getErrors().get("REQUEST_BODY").get(0).toString();
+    assertTrue(exceptionMessage.contains("body longer than 2 characters"));
   }
 }
