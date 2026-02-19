@@ -7,7 +7,7 @@ import { TodoService } from "src/app/todos/todo.service";
 @Injectable({
   providedIn: AppComponent
 })
-export class MockTodoService implements Pick<TodoService, 'getTodos' | 'filterTodos'> {
+export class MockTodoService implements Pick<TodoService, 'getTodos' | 'filterTodos' | 'addTodo'> {
   static testTodos: Todo[] =[
     {
       _id: 'blanche_lab2_id',
@@ -46,6 +46,12 @@ export class MockTodoService implements Pick<TodoService, 'getTodos' | 'filterTo
   /* eslint-disable @typescript-eslint/no-unused-vars */
   getTodos(_filters: { limit?: number }): Observable<Todo[]> {
     return of(MockTodoService.testTodos);
+  }
+
+  addTodo(newUser: Partial<Todo>): Observable<string> {
+    // Send post request to add a new todo with the todo data as the body.
+    // `res.id` should be the MongoDB ID of the newly added `Todo`.
+    return of('')
   }
 
   filterTodos(todos: Todo[], filters: {
