@@ -149,7 +149,7 @@ class TodoControllerSpec {
     Javalin mockServer = mock(Javalin.class);
     todoController.addRoutes(mockServer);
     verify(mockServer, Mockito.atLeast(2)).get(any(), any());
-    verify(mockServer, never()).post(any(), any());
+    verify(mockServer, Mockito.atLeast(1)).post(any(), any());
     verify(mockServer, never()).delete(any(), any());
   }
 
