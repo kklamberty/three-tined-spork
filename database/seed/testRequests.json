@@ -1,0 +1,112 @@
+[
+  {
+    "_id": "699a34879725257e5875ea98",
+    "school": "MAES",
+    "grade": "kindergarten",
+    "item": "water bottle",
+    "quantity": 1
+  },
+  {
+    "_id": "699a34879725257e5875ea99",
+    "school": "MAES",
+    "grade": "kindergarten",
+    "item": "book bag to carry things home",
+    "quantity": 1
+  },
+  {
+    "_id": "699a34879725257e5875ea9a",
+    "school": "MAES",
+    "grade": "kindergarten",
+    "item": "notebook",
+    "properties": [
+      "wide ruled",
+      "70 sheets"
+    ],
+    "quantity": 2
+  },
+  {
+    "_id": "699a34879725257e5875ea9b",
+    "school": "MAES",
+    "grade": "kindergarten",
+    "item": "folder",
+    "properties": [
+      "red",
+      "plastic",
+      "3 prong"
+    ],
+    "quantity": 1
+  },
+  {
+    "_id": "699a34879725257e5875ea9c",
+    "school": "MAES",
+    "grade": "kindergarten",
+    "item": "scissors",
+    "properties": [
+      "Fiskars",
+      "blunt tip",
+      "kid"
+    ],
+    "quantity": 1
+  },
+  {
+    "_id": "699a34879725257e5875ea9d",
+    "school": "MAES",
+    "grade": "kindergarten",
+    "item": "folder",
+    "properties": [
+      "blue",
+      "plastic",
+      "3 prong"
+    ],
+    "quantity": 1
+  },
+  {
+    "_id": "699a34879725257e5875ea9e",
+    "school": "MAES",
+    "grade": "kindergarten",
+    "item": "watercolors",
+    "properties": [
+      "washable",
+      "8 color",
+      "Crayola"
+    ],
+    "quantity": 1
+  },
+  {
+    "_id": "699a34879725257e5875ea9f",
+    "school": "MAES",
+    "grade": "kindergarten",
+    "item": "box of markers",
+    "properties": [
+      "classic colors",
+      "10 count markers",
+      "Crayola",
+      "broad line"
+    ],
+    "quantity": 2
+  },
+  {
+    "_id": "699a34879725257e5875eaa0",
+    "school": "MAES",
+    "grade": "kindergarten",
+    "item": "pencil",
+    "properties": [
+      "#2",
+      "sharpened",
+      "yellow",
+      "Ticonderoga",
+      "not mechanical"
+    ],
+    "quantity": 12
+  },
+  {
+    "_id": "699a34879725257e5875eaa1",
+    "school": "MAES",
+    "grade": "kindergarten",
+    "item": "dry erase marker",
+    "properties": [
+      "black"
+    ],
+    "quantity": 6
+  }
+]

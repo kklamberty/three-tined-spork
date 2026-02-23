@@ -1,0 +1,119 @@
+[
+  {
+    "_id": "699be4de37019610e3dc1432",
+    "school": "MAHS",
+    "grade": "HS",
+    "description": "1 pocket folder red (English)",
+    "item": "folder",
+    "properties": [
+      "pocket",
+      "red"
+    ],
+    "quantity": 1
+  },
+  {
+    "_id": "699be4de37019610e3dc1433",
+    "school": "MAHS",
+    "grade": "HS",
+    "description": "1 pocket folder green (science)",
+    "item": "folder",
+    "properties": [
+      "pocket",
+      "green",
+      "durable"
+    ],
+    "quantity": 1
+  },
+  {
+    "_id": "699be4de37019610e3dc1434",
+    "school": "MAHS",
+    "grade": "HS",
+    "description": "assignment book/planner",
+    "item": "planner",
+    "quantity": 1
+  },
+  {
+    "_id": "699be4de37019610e3dc1435",
+    "school": "MAHS",
+    "grade": "HS",
+    "description": "1 pocket folder purple",
+    "item": "folder",
+    "properties": [
+      "pocket",
+      "purple"
+    ],
+    "quantity": 1
+  },
+  {
+    "_id": "699be4de37019610e3dc1436",
+    "school": "MAHS",
+    "grade": "HS",
+    "description": "1 colored spiral notebook red (English)",
+    "item": "notebook",
+    "properties": [
+      "spiral bound",
+      "red"
+    ],
+    "quantity": 1,
+    "notes": "some students may want two notebooks for English"
+  },
+  {
+    "_id": "699be4de37019610e3dc1437",
+    "school": "MAHS",
+    "grade": "HS",
+    "description": "1 colored spiral notebook yellow college ruled (history)",
+    "item": "notebook",
+    "properties": [
+      "spiral bound",
+      "yellow",
+      "college ruled"
+    ],
+    "quantity": 1
+  },
+  {
+    "_id": "699be4de37019610e3dc1438",
+    "school": "MAHS",
+    "grade": "HS",
+    "description": "1 colored spiral notebook blue (math)",
+    "item": "notebook",
+    "properties": [
+      "spiral bound",
+      "blue"
+    ],
+    "quantity": 1
+  },
+  {
+    "_id": "699be4de37019610e3dc1439",
+    "school": "MAHS",
+    "grade": "HS",
+    "description": "1 colored spiral notebook purple",
+    "item": "notebook",
+    "properties": [
+      "spiral bound",
+      "purple"
+    ],
+    "quantity": 1
+  },
+  {
+    "_id": "699be4de37019610e3dc143a",
+    "school": "MAHS",
+    "grade": "HS",
+    "description": "loose leaf paper",
+    "item": "pack of loose leaf paper",
+    "quantity": 1,
+    "notes": "requested by math"
+  },
+  {
+    "_id": "699be4de37019610e3dc143b",
+    "school": "MAHS",
+    "grade": "HS",
+    "description": "1 colored composition notebook green (science)",
+    "item": "notebook",
+    "properties": [
+      "composition",
+      "green"
+    ],
+    "quantity": 1,
+    "notes": "composition preferred"
+  }
+]
